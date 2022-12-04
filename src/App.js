@@ -1,37 +1,59 @@
-import { useEffect } from "react";
-import { useState } from "react";
-import MovieCard from "./MovieCard";
-
+import { useEffect, useState } from 'react'
+import './App.css';
+import MovieCard from './MovieCard';
 
 function App() {
-  const API_URL = "https://api.themoviedb.org/3/movie/550?api_key=bdf3db4d8aeb9933ed740985ea11e646"
+
+  const API_URL = "https://api.themoviedb.org/3/movie/popular?api_key=fa1192549721df01a1fb28a7788e6608"
+  const API_SEARCH = "https://api.themoviedb.org/3/search/movie?api_key=fa1192549721df01a1fb28a7788e6608&query="
+
+
   const [movies, setMovies] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     fetch(API_URL)
-      .then(res => res.json())
-      .then(data => setMovies(data.results))
+      .then((res) => res.json())
+      .then((data) => {
+        setMovies(data.results)
+      })
+  }, [])
 
 
-  })
+
+  console.log(movies)
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    fetch(API_SEARCH + searchTerm)
+      .then((res) => res.json())
+      .then(data => {
+        setMovies(data.results)
+      })
+  }
+
+  console.log(searchTerm)
   return (
     <div className="App">
-      <div className="search_nav">
-        <h1> Movies</h1>
-      </div>
-      <div className="">
-        <form action="">
-          <input type="text" />
-          <button> Search</button>
+
+      <div className='form'>
+        <form onSubmit={handleSubmit}>
+          <input onChange={(e) => setSearchTerm(e.target.value)} />
+          <button type='submit' >Submit</button>
         </form>
       </div>
-      <div className="movies">
-        {movies.map((movie) => (
-          <MovieCard {...movies} />
-        ))}
+
+      <div className='appContainer'>
+        {
+          movies.map(el => (
+            <MovieCard key={el.id} {...el} />
+          ))}
       </div>
 
     </div>
+
   );
 }
 
